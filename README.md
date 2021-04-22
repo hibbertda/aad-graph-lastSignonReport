@@ -117,11 +117,36 @@ With a succesful run of the script the MSI permissions will be updated.
 
 ### Trigger
 
+The goal of this report is to generate a report on a regular basis. For this example I am using a [time-based trigger](https://docs.microsoft.com/en-us/azure/logic-apps/tutorial-build-schedule-recurring-logic-app-workflow#:~:text=Add%20the%20Recurrence%20trigger%201%20In%20the%20Logic,described%20and%20shown%20here.%20...%20More%20items...%20) to kickoff the workflow everyday at midnight (0:00). 
+
+<br>
+
+![time-based trigger](./static/la-wf-trigger.png)
 
 
 ### HTTP Action - GET Microsoft Graph
 
+Logic Apps do not use a specific / dedicated connector to query the Microsoft Graph API. The [HTTP Action](https://docs.microsoft.com/en-us/azure/connectors/connectors-native-http#:~:text=To%20use%20the%20HTTP%20action%2C%20start%20your%20logic,your%20blank%20logic%20app%20in%20Logic%20App%20Designer.) to make REST calls to the API. This action allows the definition of query strings, and configuring authentication with a Managed Identity. 
 
+<br>
+
+![HTTP GET Microsoft Graph API](./static/la-wf-http.png)
+
+|Option||
+|---|---|
+|Method|GET|
+|URI|https://graph.microsoft.com/beta/users|
+|**Queries**||
+|Key|Select|
+|value|displayName, userPrincipalName,SignInActivity|
+|**Authentication**||
+|Authentication Type|Managed Identity|
+|Managed identity| System-assigned managed identity|
+|Audiance|https://graph.microsoft.com|
+
+<br>
+
+This configuration will use the Managed Identity to query for all users in the directory. Returning usernames and recent signon activity, including the last sign-on date and time. Output from this action will be the raw JSON payload returned from the Graph API query. 
 
 ### Intiaite Variable
 
